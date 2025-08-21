@@ -1,0 +1,52 @@
+name: Java CI/CD Demo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-artifact
+          path: target/*.war
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: java-artifact
+          path: ./artifact
+
+      - name: List artifact contents
+        run: ls -lh ./artifact
+
+      - name: Checkout custom actions repo
+        uses: actions/checkout@v4
+        with:
+          repository: your-org/github-actions-cicd
+          path: ./github-actions-cicd
+
+      - name: Run custom build-war action
+        uses: ./github-actions-cicd/.github/actions/build-war
+        with:
+          final_artifact_name: "my-final-app.war"
+          pom_location: "./artifact"
