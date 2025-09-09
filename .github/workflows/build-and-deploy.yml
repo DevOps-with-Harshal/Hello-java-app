@@ -24,7 +24,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: java-artifact
-          path: target/*.war
+          path: target/*.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,15 +38,3 @@ jobs:
 
       - name: List artifact contents
         run: ls -lh ./artifact
-
-      - name: Checkout custom actions repo
-        uses: actions/checkout@v4
-        with:
-          repository: your-org/github-actions-cicd
-          path: ./github-actions-cicd
-
-      - name: Run custom build-war action
-        uses: ./github-actions-cicd/.github/actions/build-war
-        with:
-          final_artifact_name: "my-final-app.war"
-          pom_location: "./artifact"
