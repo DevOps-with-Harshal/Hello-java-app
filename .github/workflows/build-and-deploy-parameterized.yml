@@ -1,0 +1,22 @@
+name: Java CI/CD Demo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    uses: my-org/github-actions-cicd/.github/workflows/build.yml@main
+    with:
+      artifact-name: java-demo-artifact
+      java-version: '17'
+      java-distribution: temurin
+      target-file: "*.jar"
+
+  deploy:
+    uses: my-org/github-actions-cicd/.github/workflows/deploy.yml@main
+    needs: build
+    with:
+      artifact-name: java-demo-artifact
+      target-artifact: "java-demo-1.0-SNAPSHOT-jar-with-dependencies.jar"
